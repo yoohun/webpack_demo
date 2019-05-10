@@ -1,0 +1,9 @@
+body{
+  background: purple
+}
+#div1{
+      border: 1px solid red;
+      background-image: url(/images/d13185c4c74251acdcf8e7c3ab0b594c.png);
+      width:466px;
+      height:453px;
+    }
