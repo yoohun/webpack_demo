@@ -24,9 +24,13 @@ module.exports={
       {
         test: /\.css$/,
         use: ['style-loader',
-          MiniCssExtractPlugin.loader,
-        'css-loader'
-      ]
+        {
+          loader: MiniCssExtractPlugin.loader
+        },{
+          loader: 'css-loader',
+        },{
+          loader: 'postcss-loader'
+        }]
       }, {
         test: /\.(png|jpg|gif)/,
         use: [{
