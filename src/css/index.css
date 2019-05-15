@@ -7,4 +7,5 @@ body{
       width:466px;
       height:453px;
       transform: rotate(45deg);
+      border: 1px solid red;
     }

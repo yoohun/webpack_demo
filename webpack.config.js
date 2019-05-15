@@ -1,7 +1,9 @@
 const path = require('path')
+const glob = require('glob');
 const ugfliy = require('uglifyjs-webpack-plugin')
 const htmlplugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const PurifyCSSPlugin = require("purifycss-webpack");
 var website = { publicPath: '/'}
 
 
@@ -57,6 +59,12 @@ module.exports={
           'css-loader',
           'less-loader'
         ]
+      }, {
+        test: /\.(js|jsx)$/,
+        use: {
+          loader: 'babel-loader'
+        },
+        exclude: /node_modules/
       }
     ]
   },
@@ -74,6 +82,10 @@ module.exports={
       // both options are optional
       filename: "css/index.css"
     }),
+    new PurifyCSSPlugin({
+      paths: glob.sync(path.join(__dirname, 'src/*.html'))
+    }),
+
   ],
   //配置webpack开发服务功能
   devServer: {

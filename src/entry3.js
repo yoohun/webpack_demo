@@ -1,1 +1,1 @@
-document.getElementById('div1').innerHTML='吴世勋啊炎亚纶啊啊啊啊金世润啊啊啊啊啊啊啊啊啊啊'
+document.getElementById('div1').innerHTML='吴'
