@@ -222,3 +222,153 @@ webpack.config.js
 		}]	
 	}
 
+
+##8.CSS分离与路径的处理  
+即把css从js中分离出来，并且其路径正确  
+
+1.css分离  
+css分离要使用插件：mini-css-extract-plugin【该插件会把引入js文件中的css文件打包分离出来】  
+安装： npm install mini-css-extract-plugin --save-dev  
+
+**webpack4如果要分离css的话要使用mini-extract-extract-plugin插件**    
+**如果是webpack3的话需要使用extract-text-webpack-plugin插件**    
+
+安装之后要引入该插件    
+
+
+
+	const minicss = require('mini-css-extract-plugin')
+	modules:{
+		rules: [{
+			test: /\.css$/,
+			use:['style-loader',
+				minicss.loader,
+				'css-loader'
+			]
+		}]
+	}
+	plugin: [
+		new	minicss ({
+			filename: '[name].css'
+		})
+	]
+
+因为css被分离，所以在css里的图片就会有所改变，这个情况下就可以使用publicPath来解决。
+因此整个的代码就是这样：    
+
+
+	const minicss = require('mini-css-extract-plugin')
+	const website = {publicPath: '/'或者'IP地址'}
+	modules:{
+		rules: [{
+			test: /\.css$/,
+			use:['style-loader',
+				minicss.loader,
+				'css-loader'
+			],
+			output: {publicPath:website.publicPath}
+		}]
+	}
+	plugin: [
+		new	minicss ({
+			filename: '[name].css'
+		})
+	]    
+
+
+##9.处理HTML中的图片  
+1.在webpack中需要使用一个loader才能正确地是的html中的图片有正常的显示： html-withimg-loader  
+**！！！！这是一个loader不是插件**  
+安装该loader： `npm install --save-dev html-withimg-loader`  
+配置：  
+
+	module: {
+		rules: [{
+			test: /\.(htm|html)$/i,
+			use: [
+				'html-withimg-loader'
+			]
+		}]	
+	}
+以上配置完成，可以使用相关的命令进行打包  
+
+2.把图片放到指定的文件夹下  
+在前几节的操作中，有把图片进行分离但是图片是在src文件夹下的，一旦图片多了起来就不能很好的进行管理，因此我们需要把分离开来的图片放在一个文件夹中：  
+
+	module:{
+		        rules: [
+		            rules: [{
+				test: /\.(jpg|gif|png)$/i,
+				use: [{
+					loader: 'url-loader',
+					options: {
+						limit: 500000,
+						outputPath:'images/',
+					}
+				}]
+			}]	
+	
+	}
+
+##10.Less文件的打包和分离  
+在项目中很有可能会是用less，但是对于webpack来说，需要有loader才能把less成功打包并且成功地将less的内容显示出来，该loader是:less-loader。不过在安装less-loader之前需要先安装less。
+同时！！！如果想要打包后把less语言正确地解析为css的话还需要style-loader和css-loader的帮助！！！！ 
+安装：  
+`npm install less --save-dev`  
+`npm install less-loader --save-dev`  
+
+配置:  
+webpack.config.js  
+
+	module: {
+		rules: [{
+			test: /\.less$/i,
+			use: ['style-loader','css-loader','less-loader']
+		}]		
+	}  
+**注意！！！！！顺序很重要**  
+
+less文件会和其他的css文件一样在js中引入，然后一起打包，所以我们在分离less文件的时候也需要用到前面使用的mini-css-extract-plugin，配置如下：  
+webpack.config.js  
+
+	module: {
+		rules: [{
+			test: /\.less$/i,
+			use: [minicss.loader,'css-loader','less-loader']
+		}]		
+	}  
+
+**顺序很重要！！！！！！！！！！**   
+配置完成之后就可以看到less文件被放在了和其他的css文件中一起，此时再使用相关的命令进行打包。  
+
+##11.SASS文件的打包和分离  
+在实际项目中会使用到less也有可能会使用到sass，在分离sass的时候也是需要一个loader：sass-loader，并且在安装前也需要安装sass  
+安装：  
+`npm install sass --save-dev`  
+`npm install sass-loader --save-dev`     
+
+*如果在安装的时候一直报错，就需要删掉node_modules文件夹删除掉再重新安装*  
+
+
+
+配置:  
+webpack.config.js  
+
+	module: {
+		rules: [{
+			test: /\.sass$/i,
+			use: ['style-loader','css-loader','sass-loader']
+		}]		
+	}   
+
+分离sass文件：  
+webpack.config.js  
+
+	module: {
+		rules: [{
+			test: /\.sass$/i,
+			use: ['style-loader',minicss.loader,'css-loader','sass-loader']
+		}]		
+	}  
+
+##12.postcss自动处理CSS3属性前缀
